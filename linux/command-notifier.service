@@ -1,0 +1,13 @@
+[Unit]
+Description=Command Output Notification Server
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_USERNAME
+ExecStart=/usr/local/bin/command-notifier-server
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target 

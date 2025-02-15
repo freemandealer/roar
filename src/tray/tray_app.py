@@ -8,8 +8,27 @@ import subprocess
 import requests
 import json
 import time
+import configparser
 from typing import List, Optional
+from pathlib import Path
 from urllib.parse import urljoin
+
+def load_config():
+    config = configparser.ConfigParser()
+    
+    # 查找配置文件
+    config_paths = [
+        Path.home() / '.config/command-notifier/config.ini',  # 用户配置
+        Path(__file__).parent.parent.parent / 'config.ini'  # 项目目录配置
+    ]
+    
+    for config_path in config_paths:
+        if config_path.exists():
+            config.read(str(config_path))
+            return config['server']['url']
+    
+    # 如果没有找到配置文件，使用默认值
+    return "http://localhost:5000"
 
 def send_notification(title: str, subtitle: str, message: str):
     """使用 osascript 发送 macOS 通知"""
@@ -119,10 +138,5 @@ class CommandNotifierApp(rumps.App):
             webbrowser.open('file://' + f.name)
 
 if __name__ == '__main__':
-    import sys
-    if len(sys.argv) < 2:
-        print("Usage: python tray_app.py http://server-address:5000")
-        sys.exit(1)
-    
-    server_url = sys.argv[1]
+    server_url = load_config()
     CommandNotifierApp(server_url).run() 
