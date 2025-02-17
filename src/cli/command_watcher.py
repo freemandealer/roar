@@ -27,10 +27,11 @@ def load_config():
     return "http://localhost:5000/notify"
 
 SERVER_URL = load_config()
+print(SERVER_URL)
 
 def send_to_server(lines: List[str]):
     try:
-        requests.post(SERVER_URL, json={"lines": lines}, timeout=1)
+        requests.post(SERVER_URL + "/notify", json={"lines": lines}, timeout=1)
     except Exception:
         pass  # Silently fail to not interfere with the original command
 

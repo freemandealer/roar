@@ -47,8 +47,18 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     sudo cp "$SCRIPT_DIR/src/tray/tray_app.py" /usr/local/bin/command-notifier-tray
     sudo chmod +x /usr/local/bin/command-notifier-tray
     
-    # 安装启动项
+    # 创建 LaunchAgents 目录（如果不存在）
+    mkdir -p ~/Library/LaunchAgents
+    
+    # 安装启动项并设置正确的权限
     cp "$SCRIPT_DIR/mac/com.command-notifier.tray.plist" ~/Library/LaunchAgents/
+    chmod 644 ~/Library/LaunchAgents/com.command-notifier.tray.plist
+    chown $USER ~/Library/LaunchAgents/com.command-notifier.tray.plist
+    
+    # 卸载已存在的服务（如果有）
+    launchctl unload ~/Library/LaunchAgents/com.command-notifier.tray.plist 2>/dev/null
+    
+    # 加载并启动服务
     launchctl load ~/Library/LaunchAgents/com.command-notifier.tray.plist
     launchctl start com.command-notifier.tray
 fi
